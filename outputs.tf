@@ -1,7 +1,7 @@
-output "public_id" {
+output "public_ip" {
     value = module.compute.public_ip
 }
 
 output "ssh_command" {
-    value = "ssh ubuntu@${module.compute.public_id}" 
+    value = "ssh ubuntu@${module.compute.public_ip}" 
 }
