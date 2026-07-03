@@ -1,23 +1,28 @@
 variable "aws_region" {
-    type = string
-    default = "us-east-1"
+    description = "AWS region where the infrastructure will be deployed"
+    type        = string
+    default     = "us-east-1"
 }
 
 variable "project_name" {
-    type = string
-    default = "landing-page-gm"
+    description = "Project name, used to name and label resources"
+    type        = string
+    default     = "landing-page-gm"
 }
 
 variable "instance_type" {
-    type = string
-    default = "t3.micro"
+    description = "Type of EC2 instance to provision"
+    type        = string
+    default     = "t3.micro"
 }
 
 variable "my_ip" {
-    description = "38.250.151.198/32"
-    type = string
+    description = "Own public IP in CIDR format (x.x.x.x/32) authorized for SSH. The value is defined in Terraform Cloud."
+    type        = string
+    sensitive   = true
 }
 
 variable "ssh_public_key" {
-    description = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIL4in7l1o14PbY836sfJf83kQwn95WHO+R2uRLcO7pDR landing-page-ec2"
+    description = "Content of the SSH public key for access to the instance. The value is defined in Terraform Cloud."
+    type        = string
 }

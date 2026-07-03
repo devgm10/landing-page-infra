@@ -1,7 +1,9 @@
 variable "project_name" {
-    type = string
+    description = "Project name, used to name and label the security group"
+    type        = string
 }
 
 variable "my_ip" {
-    type = string
+    description = "Own public IP in CIDR format (e.g. x.x.x.x/32) authorized for SSH access"
+    type        = string
 }
