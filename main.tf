@@ -1,7 +1,6 @@
 module "network" {
     source          = "./modules/network"
     project_name    = var.project_name
-    my_ip           = var.my_ip
 }
 
 module "compute" {

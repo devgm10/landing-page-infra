@@ -1,6 +1,6 @@
 resource "aws_security_group" "web" {
     name        = "${var.project_name}-sg"
-    description = "HTTP, HTTPS y SSH restringido"
+    description = "HTTP, HTTPS restricted"
 
     ingress {
         description = "HTTP"
@@ -16,14 +16,6 @@ resource "aws_security_group" "web" {
         to_port     = 443
         protocol    = "tcp"
         cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    ingress {
-        description = "SSH restringido"
-        from_port   = 22
-        to_port     = 22
-        protocol    = "tcp"
-        cidr_blocks = [var.my_ip]
     }
 
     egress {
