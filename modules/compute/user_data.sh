@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+# Instalación de Docker
 apt-get update
 apt-get install -y ca-certificates curl gnupg
 
@@ -19,3 +20,17 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 usermod -aG docker ubuntu
 systemctl enable docker
 systemctl start docker
+
+# Create the app's docker-compose.yml
+mkdir -p /home/ubuntu/landing
+cat > /home/ubuntu/landing/docker-compose.yml << 'EOF'
+services:
+    web:
+        image: devgm1995/landing-page:latest
+        container_name: landing
+        ports:
+            - "80:80"
+        restart: unless-stopped
+EOF
+
+chown -R ubuntu:ubuntu /home/ubuntu/landing

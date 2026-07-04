@@ -9,7 +9,7 @@ terraform {
     }
 
     cloud {
-        organization = "GMDev"
+        organization = "landing-org"
         workspaces {
             name = "landing-page-infra"
         }
