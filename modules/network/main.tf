@@ -1,6 +1,6 @@
 resource "aws_security_group" "web" {
     name        = "${var.project_name}-sg"
-    description = "HTTP, HTTPS restricted"
+    description = "HTTP, HTTPS restringido"
 
     ingress {
         description = "HTTP"
