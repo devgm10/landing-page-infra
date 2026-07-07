@@ -13,7 +13,7 @@ variable "project_name" {
 variable "instance_type" {
     description = "Type of EC2 instance to provision"
     type        = string
-    default     = "t3.micro"
+    default     = "t3.small"
 }
 
 variable "my_ip" {
