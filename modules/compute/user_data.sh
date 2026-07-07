@@ -36,76 +36,35 @@ EOF
 chown -R ubuntu:ubuntu /home/ubuntu/landing
 
 # Monitoring stack (Prometheus + Grafana + exporters)
-mkdir -p /home/ubuntu/monitoring
 mkdir -p /home/ubuntu/monitoring/grafana/provisioning/datasources
 mkdir -p /home/ubuntu/monitoring/grafana/provisioning/dashboards
 mkdir -p /home/ubuntu/monitoring/grafana/dashboards
 
-# Prometheus Configuration
-cat > /home/ubuntu/monitoring/prometheus.yml << 'EOF'
-global:
-    scrape_interval: 15s
+# Configuración de Prometheus
+printf 'global:\n  scrape_interval: 15s\n\nscrape_configs:\n  - job_name: "prometheus"\n    static_configs:\n      - targets: ["localhost:9090"]\n\n  - job_name: "node-exporter"\n    static_configs:\n      - targets: ["node-exporter:9100"]\n\n  - job_name: "cadvisor"\n    static_configs:\n      - targets: ["cadvisor:8080"]\n' > /home/ubuntu/monitoring/prometheus.yml
 
-scrape_configs:
-    - job_name: 'prometheus'
-        static_configs:
-        - targets: ['localhost:9090']
+# Prometheus datasource provisioning
+printf 'apiVersion: 1\n\ndatasources:\n  - name: Prometheus\n    type: prometheus\n    access: proxy\n    url: http://prometheus:9090\n    isDefault: true\n    editable: true\n' > /home/ubuntu/monitoring/grafana/provisioning/datasources/prometheus.yml
 
-    - job_name: 'node-exporter'
-        static_configs:
-        - targets: ['node-exporter:9100']
-
-    - job_name: 'cadvisor'
-        static_configs:
-        - targets: ['cadvisor:8080']
-EOF
-
-# provisioning: Prometheus datasource (auto-connected)
-cat > /home/ubuntu/monitoring/grafana/provisioning/datasources/prometheus.yml << 'EOF'
-apiVersion: 1
-
-datasources:
-    - name: Prometheus
-        type: prometheus
-        access: proxy
-        url: http://prometheus:9090
-        isDefault: true
-        editable: true
-EOF
-
-# Provisioning: config that tells Grafana where to look for dashboards
-cat > /home/ubuntu/monitoring/grafana/provisioning/dashboards/dashboards.yml << 'EOF'
-apiVersion: 1
-
-providers:
-    - name: 'default'
-        orgId: 1
-        folder: ''
-        type: file
-        disableDeletion: false
-        editable: true
-        options:
-            path: /var/lib/grafana/dashboards
-EOF
+# Dashboard provisioning (tells Grafana where to look for them)
+printf 'apiVersion: 1\n\nproviders:\n  - name: "default"\n    orgId: 1\n    folder: ""\n    type: file\n    disableDeletion: false\n    editable: true\n    options:\n      path: /var/lib/grafana/dashboards\n' > /home/ubuntu/monitoring/grafana/provisioning/dashboards/dashboards.yml
 
 # Download the JSON dashboards from grafana.com
-curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download \
-    -o /home/ubuntu/monitoring/grafana/dashboards/node-exporter.json
-curl -sL https://grafana.com/api/dashboards/19792/revisions/latest/download \
-    -o /home/ubuntu/monitoring/grafana/dashboards/cadvisor.json
+curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download -o /home/ubuntu/monitoring/grafana/dashboards/node-exporter.json
+curl -sL https://grafana.com/api/dashboards/19792/revisions/latest/download -o /home/ubuntu/monitoring/grafana/dashboards/cadvisor.json
 
 # Docker Compose monitoring stack
-cat > /home/ubuntu/monitoring/docker-compose.yml << 'EOF'
+cat > /home/ubuntu/monitoring/docker-compose.yml << 'DOCKEREOF'
 services:
     prometheus:
         image: prom/prometheus:latest
         container_name: prometheus
-        ports:
-            - "9090:9090"
-        volumes:
-            - ./prometheus.yml:/etc/prometheus/prometheus.yml
-            - prometheus_data:/prometheus
-        restart: unless-stopped
+            ports:
+                - "9090:9090"
+            volumes:
+                - ./prometheus.yml:/etc/prometheus/prometheus.yml
+                - prometheus_data:/prometheus
+            restart: unless-stopped
 
     grafana:
         image: grafana/grafana:latest
@@ -140,9 +99,9 @@ services:
 volumes:
     prometheus_data:
     grafana_data:
-EOF
+DOCKEREOF
 
 chown -R ubuntu:ubuntu /home/ubuntu/monitoring
 
-# Raise the monitoring stack
+# Levantar el stack de monitoreo
 cd /home/ubuntu/monitoring && docker compose up -d
