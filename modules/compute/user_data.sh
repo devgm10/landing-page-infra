@@ -59,12 +59,12 @@ services:
     prometheus:
         image: prom/prometheus:latest
         container_name: prometheus
-            ports:
-                - "9090:9090"
-            volumes:
-                - ./prometheus.yml:/etc/prometheus/prometheus.yml
-                - prometheus_data:/prometheus
-            restart: unless-stopped
+        ports:
+            - "9090:9090"
+        volumes:
+            - ./prometheus.yml:/etc/prometheus/prometheus.yml
+            - prometheus_data:/prometheus
+        restart: unless-stopped
 
     grafana:
         image: grafana/grafana:latest
