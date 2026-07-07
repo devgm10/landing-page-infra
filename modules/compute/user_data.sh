@@ -54,52 +54,7 @@ curl -sL https://grafana.com/api/dashboards/1860/revisions/latest/download -o /h
 curl -sL https://grafana.com/api/dashboards/19792/revisions/latest/download -o /home/ubuntu/monitoring/grafana/dashboards/cadvisor.json
 
 # Docker Compose monitoring stack
-cat > /home/ubuntu/monitoring/docker-compose.yml << 'DOCKEREOF'
-services:
-    prometheus:
-        image: prom/prometheus:latest
-        container_name: prometheus
-        ports:
-            - "9090:9090"
-        volumes:
-            - ./prometheus.yml:/etc/prometheus/prometheus.yml
-            - prometheus_data:/prometheus
-        restart: unless-stopped
-
-    grafana:
-        image: grafana/grafana:latest
-        container_name: grafana
-        ports:
-            - "3000:3000"
-        volumes:
-            - grafana_data:/var/lib/grafana
-            - ./grafana/provisioning:/etc/grafana/provisioning
-            - ./grafana/dashboards:/var/lib/grafana/dashboards
-        restart: unless-stopped
-
-    node-exporter:
-        image: prom/node-exporter:latest
-        container_name: node-exporter
-        ports:
-            - "9100:9100"
-        restart: unless-stopped
-
-    cadvisor:
-        image: gcr.io/cadvisor/cadvisor:latest
-        container_name: cadvisor
-        ports:
-            - "8080:8080"
-        volumes:
-            - /:/rootfs:ro
-            - /var/run:/var/run:ro
-            - /sys:/sys:ro
-            - /var/lib/docker/:/var/lib/docker:ro
-        restart: unless-stopped
-
-volumes:
-    prometheus_data:
-    grafana_data:
-DOCKEREOF
+printf 'services:\n  prometheus:\n    image: prom/prometheus:latest\n    container_name: prometheus\n    ports:\n      - "9090:9090"\n    volumes:\n      - ./prometheus.yml:/etc/prometheus/prometheus.yml\n      - prometheus_data:/prometheus\n    restart: unless-stopped\n\n  grafana:\n    image: grafana/grafana:latest\n    container_name: grafana\n    ports:\n      - "3000:3000"\n    volumes:\n      - grafana_data:/var/lib/grafana\n      - ./grafana/provisioning:/etc/grafana/provisioning\n      - ./grafana/dashboards:/var/lib/grafana/dashboards\n    restart: unless-stopped\n\n  node-exporter:\n    image: prom/node-exporter:latest\n    container_name: node-exporter\n    ports:\n      - "9100:9100"\n    restart: unless-stopped\n\n  cadvisor:\n    image: gcr.io/cadvisor/cadvisor:latest\n    container_name: cadvisor\n    ports:\n      - "8080:8080"\n    volumes:\n      - /:/rootfs:ro\n      - /var/run:/var/run:ro\n      - /sys:/sys:ro\n      - /var/lib/docker/:/var/lib/docker:ro\n    restart: unless-stopped\n\nvolumes:\n  prometheus_data:\n  grafana_data:\n' > /home/ubuntu/monitoring/docker-compose.yml
 
 chown -R ubuntu:ubuntu /home/ubuntu/monitoring
 
