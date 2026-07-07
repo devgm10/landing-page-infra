@@ -76,9 +76,6 @@ services:
             - "3000:3000"
         volumes:
             - grafana_data:/var/lib/grafana
-        environment:
-            - GF_SECURITY_ADMIN_USER=admin
-            - GF_SECURITY_ADMIN_PASSWORD=admin
         restart: unless-stopped
 
     node-exporter:
